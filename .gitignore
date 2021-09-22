@@ -1,0 +1,6 @@
+.gradle
+.idea
+build
+db
+src/main/resources/application.conf
+local.properties
