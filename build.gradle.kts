@@ -27,6 +27,8 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:1.4.0")
     implementation("io.ktor:ktor-client-gson:1.4.0")
     implementation("io.ktor:ktor-gson:1.4.0")
+    implementation("io.ktor:ktor-auth:1.4.0")
+    implementation("io.ktor:ktor-auth-jwt:1.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
     implementation("org.jetbrains.exposed:exposed-core:0.34.1")
     implementation("org.jetbrains.exposed:exposed-dao:0.34.1")
