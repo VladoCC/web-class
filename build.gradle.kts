@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.10"
+    kotlin("jvm") version "1.5.20"
     application
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
@@ -17,6 +17,9 @@ repositories {
     maven {
         url = uri("https://dl.bintray.com/kotlin/kotlinx")
     }
+    maven {
+        url = uri("https://jitpack.io")
+    }
 }
 dependencies {
     testImplementation(kotlin("test-junit"))
@@ -29,6 +32,7 @@ dependencies {
     implementation("io.ktor:ktor-gson:1.4.0")
     implementation("io.ktor:ktor-auth:1.4.0")
     implementation("io.ktor:ktor-auth-jwt:1.4.0")
+    implementation("com.github.komputing:khash:1.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
     implementation("org.jetbrains.exposed:exposed-core:0.34.1")
     implementation("org.jetbrains.exposed:exposed-dao:0.34.1")

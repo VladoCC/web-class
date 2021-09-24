@@ -18,6 +18,8 @@ import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.komputing.khash.keccak.KeccakParameter
+import org.komputing.khash.keccak.extensions.digestKeccak
 import java.sql.Connection
 import java.util.*
 
@@ -26,8 +28,7 @@ fun main(args: Array<String> = emptyArray()) {
 }
 
 fun Application.module(testing: Boolean = false) {
-  val encryptionKey = environment.config.property("db.encryption.key").getString()
-  initDB(encryptionKey)
+  initDB()
   install(ContentNegotiation) {
     gson {
       setPrettyPrinting()
@@ -40,7 +41,6 @@ fun Application.module(testing: Boolean = false) {
   val audience = environment.config.property("jwt.audience").getString()
   val myRealm = environment.config.property("jwt.realm").getString()
 
-
   install(Authentication) {
     jwt("auth-jwt") {
       realm = myRealm
@@ -52,7 +52,7 @@ fun Application.module(testing: Boolean = false) {
           .build()
       )
       validate { credential ->
-        val id = credential.payload.getClaim("username").asInt()
+        val id = credential.payload.getClaim("id").asInt()
         val user = transaction(database) {
           User.findById(id)
         }
@@ -64,6 +64,8 @@ fun Application.module(testing: Boolean = false) {
       }
     }
   }
+
+  val hashSalt = environment.config.property("db.hash.salt").getString()
 
   routing {
     get("/") {
@@ -77,12 +79,13 @@ fun Application.module(testing: Boolean = false) {
       val storedUser = transaction(database) {
         User.find { Users.username eq user.username }.firstOrNull()
       }
-      val success = !(storedUser != null && storedUser.password != user.password)
+      val hashedPassword = "${user.password}$hashSalt".digestKeccak(KeccakParameter.KECCAK_256).decodeToString()
+      val success = storedUser == null || storedUser.password == hashedPassword
       if (success) {
         val id = storedUser?.id ?: transaction(database) {
           User.new {
             username = user.username
-            password = user.password
+            password = hashedPassword
           }
         }.id
         val token = JWT.create()
@@ -102,15 +105,16 @@ fun Application.module(testing: Boolean = false) {
         get {
           val id = call.id()
           val todos = transaction(database) {
-            Todo.find { Todos.owner eq id }.map { it.id to it.text }
+            Todo.find { Todos.owner eq id }.map { "" + it.id to it.text }.toMap()
           }
-          call.respond(todos)
+          call.respond(mapOf("todo" to todos))
         }
         post {
+          val post = call.receive<PostContent>()
           val id = call.id()
-          val text = call.request.headers["text"]
+          val text = post.text
           var success = false
-          if (!text.isNullOrBlank()) {
+          if (text.isNotBlank()) {
             transaction(database) {
               Todo.new {
                 this.text = text
@@ -122,15 +126,16 @@ fun Application.module(testing: Boolean = false) {
           call.respond(success)
         }
         put("/{id}") {
+          val post = call.receive<PostContent>()
           val userId = call.id()
-          val text = call.request.headers["text"]
+          val text = post.text
           val id = try {
             call.parameters["id"]?.toInt()
           } catch (e: NumberFormatException) {
             null
           }
           var success = false
-          if (!text.isNullOrBlank() && userId != null && id != null) {
+          if (text.isNotBlank() && id != null) {
             transaction(database) {
               val todo = Todo.findById(id)
               if (todo?.owner == userId) {
@@ -179,3 +184,4 @@ fun ApplicationCall.id(): Int {
 }
 
 data class Auth(val username: String, val password: String)
+data class PostContent(val text: String)
