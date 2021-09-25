@@ -39,6 +39,10 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:0.34.1")
     implementation("org.slf4j:slf4j-nop:1.7.30")
     implementation("org.xerial:sqlite-jdbc:3.30.1")
+    implementation("com.zaxxer:HikariCP:3.4.5")
+
+    testImplementation("io.ktor:ktor-server-test-host:1.4.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.20")
 }
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "1.8"

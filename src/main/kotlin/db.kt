@@ -1,3 +1,5 @@
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -16,14 +18,31 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
+private var testDb = false
+private var dbPath: String? = null
+
 val database by lazy {
-  val workingDir = Paths.get("").toAbsolutePath().toString()
-  val db = Database.connect("jdbc:sqlite:$workingDir/db/todos.db", "org.sqlite.JDBC")
+  val db = if (testDb) {
+    val cfg = HikariConfig().apply {
+      jdbcUrl = "jdbc:sqlite::memory:"
+      maximumPoolSize = 6
+    }
+    Database.connect(HikariDataSource(cfg))
+  } else {
+    val path = if (dbPath == null) {
+      val workingDir = Paths.get("").toAbsolutePath().toString()
+      "$workingDir/db/todos.db"
+    } else {
+      dbPath
+    }
+    Database.connect("jdbc:sqlite:$path", "org.sqlite.JDBC")
+  }
   TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
   db
 }
 
-fun initDB() {
+fun initDB(testing: Boolean = false) {
+  testDb = testing
   val dbDir = FileSystems.getDefault().getPath("db");
   try {
     Files.createDirectories(dbDir)
@@ -48,7 +67,7 @@ class Todo(id: EntityID<Int>) : IntEntity(id) {
 
 object Users: IntIdTable() {
   val username = varchar("username", 50)
-  val password = varchar("password", 30)
+  val password = varchar("password", 32)
 }
 
 class User(id: EntityID<Int>): IntEntity(id) {

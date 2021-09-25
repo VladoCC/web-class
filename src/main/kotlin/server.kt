@@ -27,8 +27,9 @@ fun main(args: Array<String> = emptyArray()) {
   EngineMain.main(args)
 }
 
-fun Application.module(testing: Boolean = false) {
-  initDB()
+fun Application.module() {
+  val testing = environment.config.propertyOrNull("ktor.application.testing")?.getString() == "true"
+  initDB(testing)
   install(ContentNegotiation) {
     gson {
       setPrettyPrinting()
@@ -94,7 +95,7 @@ fun Application.module(testing: Boolean = false) {
           .withClaim("id", id.value)
           .withExpiresAt(Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
           .sign(Algorithm.HMAC256(secret))
-        call.respond(hashMapOf("token" to token, "action" to if (storedUser == null) "Sign in" else "Log In"))
+        call.respond(hashMapOf("token" to token, "action" to if (storedUser == null) "Sign In" else "Log In"))
       } else {
         call.respond(HttpStatusCode.Forbidden, Unit)
       }
