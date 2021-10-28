@@ -10,17 +10,10 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.ktor.sessions.*
-import io.ktor.util.*
-import kotlinx.coroutines.*
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.komputing.khash.keccak.KeccakParameter
 import org.komputing.khash.keccak.extensions.digestKeccak
-import java.sql.Connection
 import java.util.*
 
 fun main(args: Array<String> = emptyArray()) {
@@ -106,7 +99,7 @@ fun Application.module() {
         get {
           val id = call.id()
           val todos = transaction(database) {
-            Todo.find { Todos.owner eq id }.map { "" + it.id to it.text }.toMap()
+            Todo.find { Todos.owner eq id }.map { "${it.id}" to it.text }.toMap()
           }
           call.respond(mapOf("todo" to todos))
         }

@@ -163,16 +163,16 @@ class ApiTest {
       val id2 = testSingleTodo(token2, todo2)
 
       val updatedTodo = "Todo that tester don't have access to"
-      todo(token1, HttpMethod.Put,"""{ "text": "$updatedTodo"}""","/$id2") {
+      todo(token1, HttpMethod.Put, """{ "text": "$updatedTodo"}""", "/$id2") {
         assertEquals(HttpStatusCode.Forbidden, response.status())
       }
-      todo(token2, HttpMethod.Put,"""{ "text": "$updatedTodo"}""","/$id1") {
+      todo(token2, HttpMethod.Put, """{ "text": "$updatedTodo"}""", "/$id1") {
         assertEquals(HttpStatusCode.Forbidden, response.status())
       }
-      todo("", HttpMethod.Put,"""{ "text": "$updatedTodo"}""","/$id2") {
+      todo("", HttpMethod.Put, """{ "text": "$updatedTodo"}""", "/$id2") {
         assertEquals(HttpStatusCode.Unauthorized, response.status())
       }
-      todo("", HttpMethod.Put,"""{ "text": "$updatedTodo"}""","/$id1") {
+      todo("", HttpMethod.Put, """{ "text": "$updatedTodo"}""", "/$id1") {
         assertEquals(HttpStatusCode.Unauthorized, response.status())
       }
 

@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm") version "1.5.20"
     application
     id("com.github.johnrengelman.shadow") version "7.0.0"
+    id("org.cqfn.diktat.diktat-gradle-plugin") version "1.0.0-rc.3"
 }
 group = "me.wintermute"
 version = "1.0-SNAPSHOT"
@@ -57,4 +58,8 @@ tasks{
             attributes(Pair("Main-Class", "ServerKt"))
         }
     }
+}
+
+diktat {
+    inputs = files("src/main/**/*.kt")
 }

@@ -4,28 +4,23 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.komputing.khash.keccak.KeccakParameter
-import org.komputing.khash.keccak.extensions.digestKeccak
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.sql.Connection
-import java.util.*
-import javax.crypto.Cipher
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
-private var testDb = false
-private var dbPath: String? = null
-
+private const val POOL_SIZE = 6
 val database by lazy {
   val db = if (testDb) {
     val cfg = HikariConfig().apply {
       jdbcUrl = "jdbc:sqlite::memory:"
-      maximumPoolSize = 6
+      maximumPoolSize = POOL_SIZE
     }
     Database.connect(HikariDataSource(cfg))
   } else {
@@ -41,12 +36,16 @@ val database by lazy {
   db
 }
 
+private var testDb = false
+private var dbPath: String? = null
+
 fun initDB(testing: Boolean = false) {
   testDb = testing
-  val dbDir = FileSystems.getDefault().getPath("db");
+  val dbDir = FileSystems.getDefault().getPath("db")
   try {
     Files.createDirectories(dbDir)
-  } catch (e: UnsupportedOperationException) {}
+  } catch (e: UnsupportedOperationException) {
+  }
   transaction(database) {
     addLogger(StdOutSqlLogger)
     SchemaUtils.create(Todos)
@@ -54,7 +53,7 @@ fun initDB(testing: Boolean = false) {
   }
 }
 
-object Todos: IntIdTable() {
+object Todos : IntIdTable() {
   val text = varchar("text", 280)
   val owner = integer("owner")
 }
@@ -65,12 +64,12 @@ class Todo(id: EntityID<Int>) : IntEntity(id) {
   var owner by Todos.owner
 }
 
-object Users: IntIdTable() {
+object Users : IntIdTable() {
   val username = varchar("username", 50)
   val password = varchar("password", 32)
 }
 
-class User(id: EntityID<Int>): IntEntity(id) {
+class User(id: EntityID<Int>) : IntEntity(id) {
   companion object : IntEntityClass<User>(Users)
   var username by Users.username
   var password by Users.password
