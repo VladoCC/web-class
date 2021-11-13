@@ -1,3 +1,5 @@
+package pages
+
 import kotlinx.html.*
 
 fun HTML.index() {
