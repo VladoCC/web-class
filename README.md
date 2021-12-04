@@ -1,4 +1,4 @@
-# web-class
+# Web Class
 
 ## Prod Enviroment
 ![Prod Env](https://i.imgur.com/pNcCnV1.png)
