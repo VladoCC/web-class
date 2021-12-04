@@ -1,0 +1,26 @@
+name: Kotlin package
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        ./gradlew build
+    - name: Lint with Ktlint
+      run: |
+        ./gradlew ktlintCheck
+    - name: Test with JUnit
+      run: |
+        ./gradlew test
