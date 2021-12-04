@@ -23,54 +23,54 @@ import java.sql.Connection
 private const val POOL_SIZE = 6
 
 fun Application.configureDb() {
-  val dbDir = FileSystems.getDefault().getPath("db")
-  val env by inject<Env>()
-  try {
-    Files.createDirectories(dbDir)
-  } catch (e: UnsupportedOperationException) {
-    e.printStackTrace()
-  }
-
-  val database = if (env.type == "test") {
-    val cfg = HikariConfig().apply {
-      jdbcUrl = "jdbc:sqlite::memory:"
-      maximumPoolSize = POOL_SIZE
+    val dbDir = FileSystems.getDefault().getPath("db")
+    val env by inject<Env>()
+    try {
+        Files.createDirectories(dbDir)
+    } catch (e: UnsupportedOperationException) {
+        e.printStackTrace()
     }
-    Database.connect(HikariDataSource(cfg))
-  } else {
-    val workingDir = Paths.get("").toAbsolutePath().toString()
-    val path = "$workingDir/db/todos_${env.type}.db"
-    Database.connect("jdbc:sqlite:$path", "org.sqlite.JDBC")
-  }
-  TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
 
-  transaction(database) {
-    addLogger(StdOutSqlLogger)
-    SchemaUtils.create(Todos)
-    SchemaUtils.create(Users)
-  }
+    val database = if (env.type == "test") {
+        val cfg = HikariConfig().apply {
+            jdbcUrl = "jdbc:sqlite::memory:"
+            maximumPoolSize = POOL_SIZE
+        }
+        Database.connect(HikariDataSource(cfg))
+    } else {
+        val workingDir = Paths.get("").toAbsolutePath().toString()
+        val path = "$workingDir/db/todos_${env.type}.db"
+        Database.connect("jdbc:sqlite:$path", "org.sqlite.JDBC")
+    }
+    TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+
+    transaction(database) {
+        addLogger(StdOutSqlLogger)
+        SchemaUtils.create(Todos)
+        SchemaUtils.create(Users)
+    }
 }
 
 object Todos : IntIdTable() {
-  val text = varchar("text", 280)
-  val owner = integer("owner")
+    val text = varchar("text", 280)
+    val owner = integer("owner")
 }
 
 class Todo(id: EntityID<Int>) : IntEntity(id) {
-  companion object : IntEntityClass<Todo>(Todos)
+    companion object : IntEntityClass<Todo>(Todos)
 
-  var text by Todos.text
-  var owner by Todos.owner
+    var text by Todos.text
+    var owner by Todos.owner
 }
 
 object Users : IntIdTable() {
-  val username = varchar("username", 50)
-  val password = varchar("password", 32)
+    val username = varchar("username", 50)
+    val password = varchar("password", 32)
 }
 
 class User(id: EntityID<Int>) : IntEntity(id) {
-  companion object : IntEntityClass<User>(Users)
+    companion object : IntEntityClass<User>(Users)
 
-  var username by Users.username
-  var password by Users.password
+    var username by Users.username
+    var password by Users.password
 }

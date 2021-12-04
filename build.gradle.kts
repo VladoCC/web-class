@@ -3,13 +3,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
-val koin_version= "3.1.3"
+val koin_version = "3.1.3"
 
 plugins {
     kotlin("jvm") version "1.5.20"
     application
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("org.cqfn.diktat.diktat-gradle-plugin") version "1.0.0-rc.3"
+    // id("org.cqfn.diktat.diktat-gradle-plugin") version "1.0.0-rc.3"
+    id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
 }
 group = "me.wintermute"
 version = "1.0-SNAPSHOT"
@@ -60,7 +61,7 @@ application {
     mainClassName = "ServerKt"
 }
 
-tasks{
+tasks {
     shadowJar {
         manifest {
             attributes(Pair("Main-Class", "ServerKt"))
@@ -68,6 +69,25 @@ tasks{
     }
 }
 
-diktat {
-    inputs = files("src/main/**/*.kt")
+// diktat {
+//    inputs = files("src/main/**/*.kt")
+// }
+
+subprojects {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint") // Version should be inherited from parent
+
+    repositories {
+        // Required to download KtLint
+        mavenCentral()
+    }
+
+    // Optionally configure plugin
+    configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+        // debug.set(true)
+        disabledRules.set(setOf("no-wildcard-imports"))
+        filter {
+            include("**/main/**")
+            exclude("**/test/**")
+        }
+    }
 }

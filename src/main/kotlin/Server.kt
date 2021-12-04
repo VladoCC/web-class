@@ -1,16 +1,20 @@
-import io.ktor.application.*
-import io.ktor.server.netty.*
-import modules.*
+import io.ktor.application.Application
+import io.ktor.server.netty.EngineMain
+import modules.configureAuth
+import modules.configureDb
+import modules.configureDi
+import modules.configureRouting
+import modules.configureSerialization
 
 fun main(args: Array<String> = emptyArray()) {
-  EngineMain.main(args)
+    // garbage
+    EngineMain.main(args)
 }
 
 fun Application.module() {
-  configureDi()
-  configureAuth()
-  configureSerialization()
-  configureRouting()
-  configureDb()
+    configureDi()
+    configureAuth()
+    configureSerialization()
+    configureRouting()
+    configureDb()
 }
-
