@@ -1,5 +1,4 @@
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
+
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -10,10 +9,6 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.netty.*
 import modules.*
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.komputing.khash.keccak.KeccakParameter
-import org.komputing.khash.keccak.extensions.digestKeccak
-import pages.index
 import java.util.*
 
 fun main(args: Array<String> = emptyArray()) {
@@ -21,10 +16,10 @@ fun main(args: Array<String> = emptyArray()) {
 }
 
 fun Application.module() {
-  configureDI()
+  configureDi()
   configureAuth()
   configureSerialization()
   configureRouting()
-  configureDB()
+  configureDb()
 }
 

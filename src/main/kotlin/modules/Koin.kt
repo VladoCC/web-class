@@ -6,7 +6,7 @@ import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.logger.slf4jLogger
 
-fun Application.configureDI() {
+fun Application.configureDi() {
   install(Koin) {
     slf4jLogger()
 
@@ -16,7 +16,5 @@ fun Application.configureDI() {
     })
   }
 }
-
-
 
 class Env(var type: String)

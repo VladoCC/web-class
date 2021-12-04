@@ -58,7 +58,6 @@ fun Application.configureRouting() {
 
     val env by inject<Env>()
     get("/health") {
-
       call.respond(Health(env.type))
     }
 
@@ -147,4 +146,4 @@ fun ApplicationCall.id(): Int {
 
 data class Auth(val username: String, val password: String)
 data class PostContent(val text: String)
-data class Health(val APP_ENV: String)
+data class Health(val appEnv: String)

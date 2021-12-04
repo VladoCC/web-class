@@ -13,7 +13,6 @@ import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.koin.dsl.module
 import org.koin.ktor.ext.inject
 import org.koin.ktor.ext.modules
 import java.nio.file.FileSystems
@@ -23,7 +22,7 @@ import java.sql.Connection
 
 private const val POOL_SIZE = 6
 
-fun Application.configureDB() {
+fun Application.configureDb() {
   val dbDir = FileSystems.getDefault().getPath("db")
   val env by inject<Env>()
   try {
