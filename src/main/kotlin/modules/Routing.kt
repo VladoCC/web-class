@@ -1,5 +1,6 @@
 package modules
 
+/* ktlint-disable no-wildcard-imports */
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.application.*
@@ -16,6 +17,7 @@ import org.komputing.khash.keccak.KeccakParameter
 import org.komputing.khash.keccak.extensions.digestKeccak
 import pages.index
 import java.util.*
+/* ktlint-enable no-wildcard-imports */
 
 fun Application.configureRouting() {
     routing {

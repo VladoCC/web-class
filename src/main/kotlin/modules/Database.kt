@@ -1,5 +1,6 @@
 package modules
 
+/* ktlint-disable no-wildcard-imports */
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.application.*
@@ -19,6 +20,7 @@ import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.sql.Connection
+/* ktlint-enable no-wildcard-imports */
 
 private const val POOL_SIZE = 6
 

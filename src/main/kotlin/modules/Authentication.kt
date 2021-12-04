@@ -1,11 +1,13 @@
 package modules
 
+/* ktlint-disable no-wildcard-imports */
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import org.jetbrains.exposed.sql.transactions.transaction
+/* ktlint-enable no-wildcard-imports */
 
 fun Application.configureAuth() {
     install(Authentication) {

@@ -1,6 +1,7 @@
 package pages
 
-import kotlinx.html.*
+
+import kotlinx.html.* // ktlint-disable no-wildcard-imports
 
 fun HTML.index() {
     head {
