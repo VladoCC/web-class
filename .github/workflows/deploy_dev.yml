@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Deploy to dev env
         run: |
-          ${{ secrets.SSH_PRIVATE }} >> key
+          echo ${{ secrets.SSH_PRIVATE }} >> key
           chmod 600 key
           ssh -i key mod@206.189.36.39
           cd ~/server/dev/scripts/ || return
