@@ -21,7 +21,7 @@ jobs:
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
-          key: ${{ secrets.SSH_SECRET }}
+          key: ${{ secrets.SSH_PRIVATE }}
           known_hosts: unnecessary
           if_key_exists: replace
       - name: Deploy to dev env
