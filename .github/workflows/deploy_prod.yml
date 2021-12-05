@@ -13,13 +13,17 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  deploy-prod:
+  deploy-dev:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     environment: prod
     steps:
       - name: Deploy to prod env
-        run: |
-          ssh -i ${{ secrets.SSH_PRIVATE }} mod@206.189.36.39
-          cd ~/server/prod/scripts/ || return
-          sh ./build.sh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE }}
+          script: |
+            cd ~/server/prod/scripts/ || return
+            sh ./build.sh
