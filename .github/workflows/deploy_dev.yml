@@ -18,10 +18,14 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
     steps:
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_SECRET }}
+          known_hosts: unnecessary
+          if_key_exists: replace
       - name: Deploy to dev env
         run: |
-          echo "${{ secrets.SSH_PRIVATE }}" >> key
-          chmod 600 key
-          ssh -i key mod@206.189.36.39
+          ssh mod@206.189.36.39
           cd ~/server/dev/scripts/ || return
           sh ./build.sh
