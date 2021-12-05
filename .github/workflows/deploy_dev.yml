@@ -1,0 +1,25 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy dev
+
+# Controls when the workflow will run
+on:
+  workflow_run:
+    workflows:
+      - Kotlin package
+    types:
+      - completed
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  deploy-dev:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Deploy to dev env
+        run: |
+          ssh -i ${{ secrets.SSH_PRIVATE }} mod@206.189.36.39
+          cd ~/server/dev/scripts/ || return
+          sh ./build.sh
